@@ -1,0 +1,16 @@
+# Core
+transformers==4.55.2
+peft==0.17.0
+datasets==4.0.0
+accelerate==1.10.0
+safetensors==0.6.2
+tokenizers==0.21.4
+sentencepiece==0.2.1
+tqdm==4.67.1
+numpy==2.1.2
+pandas==2.3.1
+regex==2025.7.34
+requests==2.32.4
+
+# Torch (pick one install command below in README; don't hard-pin a CUDA wheel here)
+torch>=2.6
