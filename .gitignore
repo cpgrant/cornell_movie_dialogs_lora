@@ -1,5 +1,19 @@
-.venv/
+# Python
 __pycache__/
-data/*.zip
-out-cornell-phi3/checkpoint-*/
-out-cornell-phi3-merged/
+*.py[cod]
+*.log
+
+# Environments
+.venv/
+.env
+
+# Checkpoints & large model files
+*.safetensors
+*.pt
+*.bin
+
+# Data splits
+data/*.jsonl
+
+# System files
+.DS_Store
