@@ -1,182 +1,212 @@
-Complete **`README.md`** for your Cornell Movie Dialogs fine-tuning project, based on everything done so far:
 
 ---
 
-```markdown
-# Cornell Movie Dialogs Fine-Tuning with LoRA (Phi-3)
+## README.md (updated & polished)
 
-This project fine-tunes Microsoft's **Phi-3 Mini (4K instruct)** model using **LoRA (Low-Rank Adaptation)** on the **Cornell Movie Dialogs Corpus**.  
-The goal is to teach the model conversational patterns and style found in movie scripts, enabling it to produce more natural, character-like responses.
+````markdown
+# 🎬 Cornell Movie Dialogs – LoRA Fine-Tune (Phi-3 Mini)
 
----
+Fine-tune **[microsoft/phi-3-mini-4k-instruct](https://huggingface.co/microsoft/phi-3-mini-4k-instruct)** on the **Cornell Movie-Dialogs Corpus** using **LoRA** to get cinematic, multi-turn dialogue.
 
-## 📌 Goals
-
-- Fine-tune a large language model (Phi-3 Mini) on real movie conversation data.
-- Use **LoRA** for efficient training without updating all model parameters.
-- Build an **inference script** for interactive chat with the fine-tuned model.
-- Prepare the project for **reproducible training** and **GitHub release**.
-
----
-
-## 📂 Dataset
-
-**Cornell Movie Dialogs Corpus** contains:
-- 220,579 conversational exchanges between 10,292 pairs of movie characters.
-- Metadata about characters, movies, and genres.
-- Rich linguistic variety in informal, movie-style dialogue.
-
-We preprocess this dataset into train, validation, and test splits.
+<p align="left">
+  <a href="https://github.com/cpgrant/cornell_movie_dialogs_lora/actions"><img alt="CI" src="https://img.shields.io/badge/CI-none-lightgrey"></a>
+  <a href="#"><img alt="Python" src="https://img.shields.io/badge/Python-3.11-blue"></a>
+  <a href="https://pytorch.org/"><img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-2.6+-ee4c2c"></a>
+  <a href="https://huggingface.co/docs/transformers/index"><img alt="Transformers" src="https://img.shields.io/badge/Transformers-4.55.2-yellow"></a>
+</p>
 
 ---
 
-## ⚙️ Technology Stack
+## ✨ What you get
 
-- **Python 3.11**
-- **PyTorch** with CUDA 12.4 acceleration
-- **Hugging Face Transformers**
-- **PEFT (Parameter-Efficient Fine-Tuning)**
-- **BitsAndBytes** (for quantization and memory efficiency)
-- **Datasets** library for handling JSONL data
+- 🧩 **LoRA** fine-tuning (≈0.65% trainable params) on the Cornell corpus  
+- ⚡ Ready for **RTX 4090** (BF16, optional grad checkpointing)  
+- 🗂️ End-to-end scripts: data prep → train → inference  
+- 🧪 Sample prompts + optional web demo (Gradio)
 
 ---
 
-## 🧠 Algorithms & Approach
+## 📦 Install
 
-1. **Base Model**  
-   - `microsoft/phi-3-mini-4k-instruct`  
-   - Small, instruction-tuned LLM optimized for reasoning and low-latency inference.
+> **Pick ONE** Torch install, then install project deps.
 
-2. **LoRA Fine-Tuning**  
-   - Only a small fraction of model weights are updated.
-   - Saves memory, speeds up training.
-   - Gradient checkpointing used to reduce GPU memory usage.
-
-3. **Data Preprocessing**  
-   - `build_pairs.py` creates paired conversation lines.
-   - `split_pairs.py` splits into training, validation, and test sets.
-
-4. **Training**  
-   - `train_lora.py` runs LoRA fine-tuning with Hugging Face `Trainer`.
-   - Checkpoints saved every N steps.
-
-5. **Inference**  
-   - `inference.py` loads the base model and LoRA adapter.
-   - Interactive CLI chat loop.
-
----
-
-## 📁 Project Structure
-
-```
-
-cornell\_movie\_dialogs/
-├── build\_pairs.py                  # Create paired dialogues from raw dataset
-├── split\_pairs.py                   # Split into train/val/test sets
-├── train\_lora.py                    # LoRA fine-tuning script
-├── inference.py                     # Chat with the fine-tuned model
-├── train.log                        # Training log
-├── data/
-│   ├── train.jsonl
-│   ├── validation.jsonl
-│   ├── test.jsonl
-│   └── cornell\_pairs.jsonl
-├── cornell-movie-dialogs-corpus/    # Original dataset files
-├── out-cornell-phi3/                 # Fine-tuned model output
-│   ├── adapter\_model.safetensors
-│   ├── adapter\_config.json
-│   ├── tokenizer files
-│   ├── checkpoint-\* directories
-│   └── training\_args.bin
-└── requirements.txt                 # Exact dependencies
-
+**A) NVIDIA CUDA 12.4 (Linux / RTX 4090)**  
+```bash
+pip install "torch==2.6.0" --extra-index-url https://download.pytorch.org/whl/cu124
 ````
 
----
+**B) CPU-only (Mac/Windows/Linux)**
 
-## 🚀 Quick Start
+```bash
+pip install "torch==2.6.0"
+```
 
-### 1️⃣ Install dependencies
+**Then project deps**
+
 ```bash
 pip install -r requirements.txt
-````
-
-### 2️⃣ Prepare dataset
-
-```bash
-python build_pairs.py
-python split_pairs.py
 ```
 
-### 3️⃣ Train model
+💡 For the exact WSL+4090 environment, use the lock file:
 
 ```bash
-python train_lora.py
+pip install -r requirements-lock-wsl-cu124.txt
 ```
 
-### 4️⃣ Run inference
+---
+
+## 📂 Structure
+
+```
+.
+├── build_pairs.py                 # raw Cornell → prompt/response pairs (JSONL)
+├── split_pairs.py                 # train/validation/test splits
+├── train_lora.py                  # LoRA training (PEFT + Transformers Trainer)
+├── inference.py                   # interactive chat (CLI)
+├── data/                          # processed JSONL (gitignored)
+├── cornell-movie-dialogs-corpus/  # original dataset files (not required in repo)
+├── out-cornell-phi3/              # LoRA adapter + tokenizer + (ignored) checkpoints
+├── requirements.txt               # minimal portable deps
+├── requirements-lock-wsl-cu124.txt# exact freeze used on 4090 box
+└── train.log                      # training log (optional)
+```
+
+---
+
+## 🧰 Data prep
+
+1. Put the raw Cornell corpus here:
+
+```
+./cornell-movie-dialogs-corpus/
+```
+
+2. Build pairs & splits:
+
+```bash
+python build_pairs.py --data_dir cornell-movie-dialogs-corpus --out data/cornell_pairs.jsonl
+python split_pairs.py --in data/cornell_pairs.jsonl \
+  --train data/train.jsonl --valid data/validation.jsonl --test data/test.jsonl
+```
+
+---
+
+## 🚀 Train (LoRA on RTX 4090)
+
+```bash
+python train_lora.py \
+  --model_name_or_path microsoft/phi-3-mini-4k-instruct \
+  --train_file data/train.jsonl \
+  --validation_file data/validation.jsonl \
+  --output_dir out-cornell-phi3 \
+  --per_device_train_batch_size 8 \
+  --gradient_accumulation_steps 2 \
+  --learning_rate 2e-4 \
+  --num_train_epochs 3 \
+  --bf16 \
+  --gradient_checkpointing \
+  --save_steps 500 --logging_steps 20
+```
+
+Resume after a crash:
+
+```bash
+# trainer.train(resume_from_checkpoint=True) is enabled in script
+python train_lora.py ...
+```
+
+---
+
+## 💬 Inference
 
 ```bash
 python inference.py
-You: Hello there!
-Bot: Hi! How are you doing today?
+# then type:
+# You: We’re stranded on a desert highway. What now?
+```
+
+**Tip:** The script uses the model’s chat template when available for cleaner multi-turn behavior.
+
+---
+
+## 🔧 Optional: Merge LoRA → single model
+
+If you want a single folder without PEFT at inference:
+
+```bash
+python - << 'PY'
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from peft import PeftModel
+import torch, os
+base="microsoft/phi-3-mini-4k-instruct"
+adapter="out-cornell-phi3"
+out="out-cornell-phi3-merged"
+tok=AutoTokenizer.from_pretrained(base)
+m=AutoModelForCausalLM.from_pretrained(base, torch_dtype=torch.bfloat16, device_map="auto")
+m=PeftModel.from_pretrained(m, adapter).merge_and_unload()
+os.makedirs(out, exist_ok=True)
+tok.save_pretrained(out)
+m.save_pretrained(out, safe_serialization=True)
+print("Merged ->", out)
+PY
+```
+
+Then set `ADAPTER = "out-cornell-phi3-merged"` in `inference.py`.
+
+---
+
+## 🧪 Sample prompts
+
+* *“I can’t believe you just did that! Do you know what this means?”*
+* *“The car won’t start, and we’re in the middle of nowhere. What do we do?”*
+* *“Don’t walk out that door—not after everything we’ve been through.”*
+* *“You’re my grumpy older brother on a desert road trip. We just blew a tire.”*
+
+Tune decoding:
+
+* `temperature`: 0.7–0.9
+* `top_p`: 0.9–0.95
+* `repetition_penalty`: 1.05–1.2
+
+---
+
+## 📈 Latest training snapshot
+
+```
+Runtime: ~38m30s
+Train loss: ~0.262
+Samples/sec: ~258.6
+Steps/sec: ~16.16
+Epochs: 3
 ```
 
 ---
 
-## 🖥️ Training Details
+## 🧹 Git hygiene (large files)
 
-* **GPU**: NVIDIA RTX 4090 (24 GB VRAM)
-* **Batch size**: Tuned for GPU capacity
-* **Optimizer**: AdamW
-* **Learning rate**: \~1e-5
-* **LoRA rank**: Set for efficiency
-* **Epochs**: 3
-* **Final loss**: \~0.26
+This repo includes model artifacts. If you prefer smaller clones:
 
----
-
-## 📊 Example Outputs
-
-**Prompt:**
-
-```
-You: The car won’t start, and we’re in the middle of nowhere. What do we do?
-```
-
-**Model:**
-
-```
-Bot: Well, I guess we’d better get out of here.
-```
-
----
-
-## 🔮 Next Steps
-
-* Merge LoRA adapter into a single model file (`out-cornell-phi3-merged`) for easier deployment.
-* Improve prompt templates for more engaging responses.
-* Fine-tune on additional conversational datasets for broader knowledge.
-* Deploy as a web app with Gradio.
+* Use **Git LFS** for `*.safetensors` / `*.pt` / `*.bin`, or
+* Remove big files and publish adapters on the Hugging Face Hub.
 
 ---
 
 ## 📜 License
 
-This project uses the Cornell Movie Dialogs Corpus (research license)
-and Microsoft Phi-3 Mini (model license from Hugging Face).
+For research/education.
+Check base model terms: [Phi-3 Mini Instruct](https://huggingface.co/microsoft/phi-3-mini-4k-instruct).
+
+````
 
 ---
 
-## 🤝 Acknowledgments
+### Commit both
 
-* Hugging Face Transformers & Datasets
-* Microsoft for Phi-3 model
-* Cornell University for the movie dialogues corpus
+```bash
+# write .gitignore and README.md as above, then:
+git add .gitignore README.md
+git commit -m "Clean .gitignore and polished README"
+git push
+````
 
-```
-
----
-
-Do you want me to also **zip this README.md with `requirements.txt`** so you have a ready-to-upload GitHub starter? That would make the repo immediately publishable.
-```
+Want me to also drop in a **Makefile** and an **examples script** (`samples.py`) so people can run end-to-end with single commands?

@@ -1,19 +1,54 @@
-# Python
+# --- Python ---
 __pycache__/
 *.py[cod]
+*.so
+*.pyd
+*.pyo
+*.egg-info/
 *.log
 
-# Environments
+# --- Environments ---
 .venv/
+venv/
+env/
 .env
+.python-version
 
-# Checkpoints & large model files
+# --- Editors / OS ---
+.DS_Store
+.vscode/
+.idea/
+
+# --- Data ---
+# keep processed JSONL splits, ignore raw + zips
+data/cornell_movie_dialogs_corpus.zip
+data/raw/
+# ignore large intermediate/preprocessed if you add them later
+data/*.jsonl.tmp
+
+# --- Model artifacts ---
+# ignore all outputs (adapters, merged, checkpoints)
+outputs/
+# if you want to keep lightweight configs (README.md etc.), whitelist:
+!outputs/**/README.md
+!outputs/**/adapter_config.json
+!outputs/**/chat_template.jinja
+!outputs/**/special_tokens_map.json
+!outputs/**/tokenizer.json
+!outputs/**/tokenizer_config.json
+!outputs/**/tokenizer.model
+!outputs/**/added_tokens.json
+
+# ignore weight files
 *.safetensors
 *.pt
 *.bin
+*.ckpt
 
-# Data splits
-data/*.jsonl
+# --- Logs & eval results ---
+logs/
+eval_results/
+wandb/
 
-# System files
-.DS_Store
+# --- Misc caches ---
+.cache/
