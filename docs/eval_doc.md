@@ -75,7 +75,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--prompts", default="eval/eval_prompts.jsonl")
     ap.add_argument("--base", default="microsoft/phi-3-mini-4k-instruct")
-    ap.add_argument("--finetuned", default="./out-cornell-phi3-merged")
+    ap.add_argument("--finetuned", default="outputs/merged/phi3-cornell-merged-latest")
     ap.add_argument("--lora_dir", default=None)
     ap.add_argument("--system", default="You are witty and concise. Reply in 2–3 sentences, keep it PG and on-topic.")
     ap.add_argument("--out", default="eval/ab_results.jsonl")
@@ -171,7 +171,7 @@ Run (both):
 
 ```bash
 python eval/eval_perplexity.py --model_dir microsoft/phi-3-mini-4k-instruct
-python eval/eval_perplexity.py --model_dir ./out-cornell-phi3-merged
+python eval/eval_perplexity.py --model_dir outputs/merged/phi3-cornell-merged-latest
 ```
 
 ---
@@ -184,13 +184,13 @@ python eval/eval_perplexity.py --model_dir ./out-cornell-phi3-merged
 ### Inference (merged)
 ```bash
 source .venv/bin/activate
-python inference_v4.py --model_dir ./out-cornell-phi3-merged
+python inference_v4.py --model_dir outputs/merged/phi3-cornell-merged-latest
 ````
 
 ### Inference (base + LoRA)
 
 ```bash
-python inference_v4.py --model_dir microsoft/phi-3-mini-4k-instruct --lora_dir ./out-cornell-phi3
+python inference_v4.py --model_dir microsoft/phi-3-mini-4k-instruct --lora_dir ./outputs/adapters/phi3-cornell-lora
 ```
 
 ### A/B Eval
@@ -202,14 +202,14 @@ python eval/ab_eval.py
 ### Perplexity
 
 ```bash
-python eval/eval_perplexity.py --model_dir ./out-cornell-phi3-merged
+python eval/eval_perplexity.py --model_dir outputs/merged/phi3-cornell-merged-latest
 ```
 
 ````
 
 ---
 
-## 5) Model card (save as `out-cornell-phi3-merged/README.md`)
+## 5) Model card (save as `outputs/merged/phi3-cornell-merged-latest/README.md`)
 ```md
 # Phi-3 Mini (Cornell Dialogs) — LoRA Merged
 
@@ -250,7 +250,7 @@ from auto_gptq import quantize  # or use bitsandbytes 4-bit loading at inference
 
 # Or simply load with 4-bit at inference time:
 model = AutoModelForCausalLM.from_pretrained(
-    "./out-cornell-phi3-merged",
+    "outputs/merged/phi3-cornell-merged-latest",
     device_map="auto",
     load_in_4bit=True
 )

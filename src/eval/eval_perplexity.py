@@ -3,7 +3,7 @@ import math, json
 from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-MODEL_DIR = "./out-cornell-phi3-merged"  # or base model to compare
+MODEL_DIR = "outputs/merged/phi3-cornell-merged-latest"  # or base model to compare
 DATA = "data/validation.jsonl"           # your file
 
 tok = AutoTokenizer.from_pretrained(MODEL_DIR)

@@ -1,14 +1,19 @@
+.PHONY: setup train merge eval infer
+
 setup:
-\tpip install -r requirements.txt
-
-pairs:
-\tpython build_pairs.py --data_dir cornell-movie-dialogs-corpus --out data/cornell_pairs.jsonl
-
-split:
-\tpython split_pairs.py --in data/cornell_pairs.jsonl --train data/train.jsonl --valid data/validation.jsonl --test data/test.jsonl
+	python -m venv .venv && . .venv/bin/activate && pip install -U pip -r requirements.txt
 
 train:
-\tpython train_lora.py --model_name_or_path microsoft/phi-3-mini-4k-instruct --train_file data/train.jsonl --validation_file data/validation.jsonl --output_dir out-cornell-phi3 --per_device_train_batch_size 8 --gradient_accumulation_steps 2 --learning_rate 2e-4 --num_train_epochs 3 --bf16 --gradient_checkpointing --save_steps 500 --logging_steps 20
+	. .venv/bin/activate && python train_lora.py
+
+merge:
+	. .venv/bin/activate && python -m peft.utils.merge_adapter \
+	  --base microsoft/phi-3-mini-4k-instruct \
+	  --adapter outputs/adapters/phi3-cornell-lora \
+	  --out outputs/merged/phi3-cornell-merged-latest
+
+eval:
+	. .venv/bin/activate && python src/eval/ab_eval.py
 
 infer:
-\tpython inference.py
+	. .venv/bin/activate && python inference.py --model_dir outputs/merged/phi3-cornell-merged-latest

@@ -3,7 +3,7 @@ from peft import PeftModel
 import torch, glob
 
 BASE="microsoft/phi-3-mini-4k-instruct"
-ADAPTER="out-cornell-phi3"   # or out-cornell-phi3-merged
+ADAPTER="outputs/adapters/phi3-cornell-lora"   # or outputs/merged/phi3-cornell-merged-latest
 
 tok=AutoTokenizer.from_pretrained(BASE)
 if ADAPTER.endswith("-merged"):

@@ -36,7 +36,7 @@ At the end you’ll get a **win-rate %** for your finetuned model.
 
 ```bash
 python eval/eval_perplexity.py --model_dir microsoft/phi-3-mini-4k-instruct
-python eval/eval_perplexity.py --model_dir ./out-cornell-phi3-merged
+python eval/eval_perplexity.py --model_dir outputs/merged/phi3-cornell-merged-latest
 ```
 
 Compare the PPL numbers → finetuned should be lower on your validation set.
@@ -48,7 +48,7 @@ Compare the PPL numbers → finetuned should be lower on your validation set.
 Update:
 
 * `docs/LLM_lifecycle_overview.md` → add a section **“Evaluation results”**
-* `out-cornell-phi3-merged/README.md` → add **PPL numbers** and **A/B win-rate**
+* `outputs/merged/phi3-cornell-merged-latest/README.md` → add **PPL numbers** and **A/B win-rate**
 
 Example:
 
@@ -77,9 +77,9 @@ Export a 4-bit copy of your merged model for laptop/MacBook testing:
 
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
-tok = AutoTokenizer.from_pretrained("./out-cornell-phi3-merged")
+tok = AutoTokenizer.from_pretrained("outputs/merged/phi3-cornell-merged-latest")
 model = AutoModelForCausalLM.from_pretrained(
-    "./out-cornell-phi3-merged",
+    "outputs/merged/phi3-cornell-merged-latest",
     device_map="auto",
     load_in_4bit=True
 )

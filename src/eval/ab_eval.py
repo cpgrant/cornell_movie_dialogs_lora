@@ -94,10 +94,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--prompts", default="eval/eval_prompts.jsonl")
     ap.add_argument("--base", default="microsoft/phi-3-mini-4k-instruct")
-    ap.add_argument("--finetuned", default="./out-cornell-phi3-merged-36500")
+    ap.add_argument("--finetuned", default="outputs/merged/phi3-cornell-merged-latest")
     ap.add_argument("--lora_dir", default=None, help="Optional: use adapter instead of merged")
     ap.add_argument("--system", default="You are friendly and PG. Write exactly two short lines of dialogue for the scenario.")
-    ap.add_argument("--out", default="eval/ab_results.jsonl")
+    ap.add_argument("--out", default="eval_results/ab_results.jsonl")
 
     # NEW knobs
     ap.add_argument("--temperature", type=float, default=0.65)

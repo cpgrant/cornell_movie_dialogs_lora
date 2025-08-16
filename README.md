@@ -65,7 +65,7 @@ pip install -r requirements-lock-wsl-cu124.txt
 ├── inference.py                   # interactive chat (CLI)
 ├── data/                          # processed JSONL (gitignored)
 ├── cornell-movie-dialogs-corpus/  # original dataset files (not required in repo)
-├── out-cornell-phi3/              # LoRA adapter + tokenizer + (ignored) checkpoints
+├── outputs/adapters/phi3-cornell-lora/              # LoRA adapter + tokenizer + (ignored) checkpoints
 ├── requirements.txt               # minimal portable deps
 ├── requirements-lock-wsl-cu124.txt# exact freeze used on 4090 box
 └── train.log                      # training log (optional)
@@ -98,7 +98,7 @@ python train_lora.py \
   --model_name_or_path microsoft/phi-3-mini-4k-instruct \
   --train_file data/train.jsonl \
   --validation_file data/validation.jsonl \
-  --output_dir out-cornell-phi3 \
+  --output_dir outputs/adapters/phi3-cornell-lora \
   --per_device_train_batch_size 8 \
   --gradient_accumulation_steps 2 \
   --learning_rate 2e-4 \
@@ -139,8 +139,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import PeftModel
 import torch, os
 base="microsoft/phi-3-mini-4k-instruct"
-adapter="out-cornell-phi3"
-out="out-cornell-phi3-merged"
+adapter="outputs/adapters/phi3-cornell-lora"
+out="outputs/merged/phi3-cornell-merged-latest"
 tok=AutoTokenizer.from_pretrained(base)
 m=AutoModelForCausalLM.from_pretrained(base, torch_dtype=torch.bfloat16, device_map="auto")
 m=PeftModel.from_pretrained(m, adapter).merge_and_unload()
@@ -151,7 +151,7 @@ print("Merged ->", out)
 PY
 ```
 
-Then set `ADAPTER = "out-cornell-phi3-merged"` in `inference.py`.
+Then set `ADAPTER = "outputs/merged/phi3-cornell-merged-latest"` in `inference.py`.
 
 ---
 

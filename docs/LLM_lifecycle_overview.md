@@ -55,7 +55,7 @@
 
 * **Goal:** Specialize to task/style
 * **Methods:** Full finetune, LoRA/QLoRA, Instruction Tuning, RLHF
-* **Your setup:** LoRA on Cornell → `out-cornell-phi3` + merged `out-cornell-phi3-merged`
+* **Your setup:** LoRA on Cornell → `outputs/adapters/phi3-cornell-lora` + merged `outputs/merged/phi3-cornell-merged-latest`
 
 ---
 
